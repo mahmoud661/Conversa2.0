@@ -38,6 +38,7 @@ export function ProfilePage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setNotification({ message: 'Profile updated successfully', type: 'success' });
     } catch (error) {
+      console.error('Profile update error:', error);
       setNotification({ message: 'Failed to update profile', type: 'error' });
     } finally {
       setLoading(false);

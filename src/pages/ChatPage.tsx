@@ -6,8 +6,18 @@ import { useSettings } from "@/hooks/useSettings";
 import { showNotification } from "@/lib/notifications";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+// Define Contact interface
+interface Contact {
+  id: string;
+  name: string;
+  avatar: string;
+  status: string;
+  email: string;
+  isAI?: boolean;
+}
+
 // Dummy contacts data
-const dummyContacts = [
+const dummyContacts: Contact[] = [
   {
     id: "contact-1",
     name: "Jane Smith",
@@ -91,14 +101,14 @@ const playSound = (sound: string) => {
 
 export function ChatPage() {
   const { soundEnabled, notifications } = useSettings();
-  const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
   const [user] = useState<User>(dummyUser);
   
   // Add message to chat history
-  const addMessage = (contactId: string, message: Message) => {
+  const addMessage = (message: Message) => {
     setChatHistory(prev => [...prev, message]);
   };
 
@@ -196,7 +206,7 @@ export function ChatPage() {
     console.log("ChatPage: Message object created:", message);
 
     // Add to local state immediately for UI responsiveness
-    addMessage(selectedContact.id, message);
+    addMessage(message);
     console.log("ChatPage: Message added to local store");
 
     if (soundEnabled) {
@@ -218,7 +228,7 @@ export function ChatPage() {
           timestamp: new Date(),
         };
 
-        addMessage(selectedContact.id, aiResponse);
+        addMessage(aiResponse);
 
         if (soundEnabled) {
           playSound("notification");

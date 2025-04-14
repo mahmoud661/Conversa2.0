@@ -10,9 +10,6 @@ interface ChatInputProps {
 export function ChatInput({ onSendMessage }: ChatInputProps) {
   const [message, setMessage] = useState('');
   
-  // Always allow sending messages with dummy data
-  const canSendMessage = true;
-
   const handleSend = () => {
     if (message.trim()) {
       console.log('ChatInput: Send button pressed with message:', message.trim());
