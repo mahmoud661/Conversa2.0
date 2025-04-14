@@ -8,5 +8,6 @@ router.use(authenticate);
 
 router.get('/messages/:contactId', ChatController.getMessages);
 router.get('/contacts', ChatController.getContacts);
+router.post('/messages', ChatController.sendMessage);
 
 export const chatRoutes = router;

@@ -3,7 +3,7 @@ import { ContactCard } from '@/components/contacts/ContactCard';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, UserPlus } from 'lucide-react';
-import { userApi } from '@/lib/api';
+import { userApi } from '@/api/userApi';
 import { User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

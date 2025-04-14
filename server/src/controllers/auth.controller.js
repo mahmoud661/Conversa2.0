@@ -13,6 +13,7 @@ export class AuthController {
 
   static async login(req, res, next) {
     try {
+      console.log("login", req.body);
       const { token, user } = await AuthService.login(req.body);
       res.json({ token, user });
     } catch (error) {

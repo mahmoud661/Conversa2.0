@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useTokenStore } from './tokenStore';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -7,54 +8,41 @@ const api = axios.create({
   },
 });
 
-// Add interceptor to include auth token
+// Add interceptor to include auth token using our token store
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth-token');
+  const token = useTokenStore.getState().getToken();
+  console.log('API Interceptor: Token available?', !!token);
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log('API Interceptor: Added auth header for request to', config.url);
+  } else {
+    console.warn('API Interceptor: No auth token available for request to', config.url);
   }
+  
   return config;
 });
 
-export const authApi = {
-  login: async (email: string, password: string) => {
-    const { data } = await api.post('/auth/login', { email, password });
-    return data;
+// Add response interceptor for better debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log(`API Response [${response.status}] from ${response.config.method?.toUpperCase()} ${response.config.url}`);
+    return response;
   },
-  
-  register: async (email: string, password: string, name: string) => {
-    const { data } = await api.post('/auth/register', { email, password, name });
-    return data;
-  },
+  (error) => {
+    if (error.response) {
+      console.error(
+        `API Error [${error.response.status}] from ${error.config?.method?.toUpperCase()} ${error.config?.url}:`,
+        error.response.data
+      );
+    } else if (error.request) {
+      console.error(`API Error: No response received for ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+    } else {
+      console.error('API Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
-  getProfile: async () => {
-    const { data } = await api.get('/auth/profile');
-    return data;
-  },
-};
-
-export const chatApi = {
-  getMessages: async (contactId: string) => {
-    const { data } = await api.get(`/chat/messages/${contactId}`);
-    return data;
-  },
-
-  getContacts: async () => {
-    const { data } = await api.get('/chat/contacts');
-    return data;
-  },
-
-  sendMessage: async (message: { content: string; receiverId: string }) => {
-    const { data } = await api.post('/chat/messages', message);
-    return data;
-  },
-};
-
-export const userApi = {
-  getUsers: async () => {
-    const { data } = await api.get('/users');
-    return data;
-  },
-};
-
+// Export a clean API instance without the auth exports
 export default api;
