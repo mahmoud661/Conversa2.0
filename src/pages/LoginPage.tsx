@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +9,6 @@ import { Notification } from '@/components/ui/notification';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,14 +19,19 @@ export function LoginPage() {
     setLoading(true);
     setError(null);
     
-    try {
-      await login(email, password);
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Simple validation for dummy login
+    if (email.includes('@') && password.length >= 4) {
+      // Success - navigate to chat page
       navigate('/chat');
-    } catch (error) {
-      setError('Invalid credentials');
-    } finally {
-      setLoading(false);
+    } else {
+      // Show error for invalid input
+      setError('Invalid credentials. Use any valid email format and password (4+ chars)');
     }
+    
+    setLoading(false);
   };
 
   return (

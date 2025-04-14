@@ -2,19 +2,19 @@ import { User } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { useChatStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 
 interface ContactCardProps {
-  contact: User;
+  contact: User & { isAI?: boolean };
 }
 
 export function ContactCard({ contact }: ContactCardProps) {
   const navigate = useNavigate();
-  const setSelectedContact = useChatStore((state) => state.setSelectedContact);
 
   const handleClick = () => {
-    setSelectedContact(contact);
+    // Store contact info in local storage to simulate selecting a contact
+    localStorage.setItem('selectedContact', JSON.stringify(contact));
+    localStorage.setItem('userTriedSelection', 'true');
     navigate('/chat');
   };
 
@@ -33,7 +33,8 @@ export function ContactCard({ contact }: ContactCardProps) {
           <span
             className={cn(
               'absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background',
-              contact.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
+              contact.status === 'online' ? 'bg-green-500' : 
+              contact.status === 'away' ? 'bg-yellow-500' : 'bg-gray-400'
             )}
           />
         </div>
@@ -46,7 +47,7 @@ export function ContactCard({ contact }: ContactCardProps) {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">{contact.bio}</p>
+          <p className="text-sm text-muted-foreground">{contact.email}</p>
         </div>
       </div>
     </Card>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,16 +8,24 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { LogOut, Camera } from 'lucide-react';
 import { Notification } from '@/components/ui/notification';
 
+// Dummy user data
+const dummyUser = {
+  id: "user-1",
+  name: "John Doe",
+  email: "john.doe@example.com",
+  avatar: "https://ui-avatars.com/api/?name=John+Doe",
+  status: "online"
+};
+
 export function ProfilePage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const [name, setName] = useState(dummyUser?.name || '');
+  const [email, setEmail] = useState(dummyUser?.email || '');
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const handleLogout = () => {
-    logout();
+    // Just navigate to login page without actual logout logic
     navigate('/login');
   };
 
@@ -59,8 +66,8 @@ export function ProfilePage() {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={user?.avatar} alt={user?.name} />
-                <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
+                <AvatarImage src={dummyUser?.avatar} alt={dummyUser?.name} />
+                <AvatarFallback>{dummyUser?.name?.[0]}</AvatarFallback>
               </Avatar>
               <Button
                 size="icon"

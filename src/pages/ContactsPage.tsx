@@ -1,51 +1,82 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ContactCard } from '@/components/contacts/ContactCard';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, UserPlus } from 'lucide-react';
-import { userApi } from '@/api/userApi';
 import { User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/lib/auth';
-import { contacts as aiContacts } from '@/data/contacts';
+
+// Dummy user data
+const dummyUsers: User[] = [
+  {
+    id: "user-1",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "https://ui-avatars.com/api/?name=John+Doe",
+    status: "online"
+  },
+  {
+    id: "user-2",
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    avatar: "https://ui-avatars.com/api/?name=Jane+Smith",
+    status: "online"
+  },
+  {
+    id: "user-3",
+    name: "Alex Johnson",
+    email: "alex.johnson@example.com",
+    avatar: "https://ui-avatars.com/api/?name=Alex+Johnson",
+    status: "away"
+  },
+  {
+    id: "user-4",
+    name: "Emily Davis",
+    email: "emily.davis@example.com",
+    avatar: "https://ui-avatars.com/api/?name=Emily+Davis",
+    status: "offline"
+  }
+];
+
+// Dummy AI assistant data
+const dummyAIContacts = [
+  {
+    id: "ai-assistant",
+    name: "AI Assistant",
+    email: "assistant@example.com",
+    avatar: "https://ui-avatars.com/api/?name=AI+Assistant&background=4F46E5&color=fff",
+    status: "online",
+    isAI: true
+  },
+  {
+    id: "ai-helper",
+    name: "Helper Bot",
+    email: "helper@example.com",
+    avatar: "https://ui-avatars.com/api/?name=Helper+Bot&background=10B981&color=fff",
+    status: "online",
+    isAI: true
+  },
+  {
+    id: "ai-writer",
+    name: "Content Writer",
+    email: "writer@example.com",
+    avatar: "https://ui-avatars.com/api/?name=Content+Writer&background=F59E0B&color=fff",
+    status: "online",
+    isAI: true
+  }
+];
 
 export function ContactsPage() {
-  const { user: currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const fetchedUsers = await userApi.getUsers();
-        setUsers(fetchedUsers);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const filteredUsers = users.filter((user) =>
+  const filteredUsers = dummyUsers.filter((user) =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredAIContacts = aiContacts.filter((contact) =>
+  const filteredAIContacts = dummyAIContacts.filter((contact) =>
     contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground">Loading contacts...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-full flex-col">

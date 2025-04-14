@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +9,6 @@ import { Notification } from '@/components/ui/notification';
 
 export function SignupPage() {
   const navigate = useNavigate();
-  const { signup } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,14 +20,25 @@ export function SignupPage() {
     setLoading(true);
     setError(null);
     
-    try {
-      await signup(email, password, name);
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Simple validation for dummy signup
+    if (name.length >= 2 && email.includes('@') && password.length >= 6) {
+      // Success - navigate to chat page
       navigate('/chat');
-    } catch (error) {
-      setError('Failed to create account');
-    } finally {
-      setLoading(false);
+    } else {
+      // Show validation errors
+      if (name.length < 2) {
+        setError('Name must be at least 2 characters');
+      } else if (!email.includes('@')) {
+        setError('Please enter a valid email');
+      } else {
+        setError('Password must be at least 6 characters');
+      }
     }
+    
+    setLoading(false);
   };
 
   return (
