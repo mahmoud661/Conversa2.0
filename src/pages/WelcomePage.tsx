@@ -15,7 +15,7 @@ export function WelcomePage() {
         <p className="mb-8 text-lg text-muted-foreground">
           Connect with friends and chat with AI assistants
         </p>
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex flex-col gap-4 sm:flex-row justify-center">
           <Button asChild size="lg" className="min-w-[120px]">
             <Link to="/login">Login</Link>
           </Button>

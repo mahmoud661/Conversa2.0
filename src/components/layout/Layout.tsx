@@ -1,9 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 
-export function Layout() {
-  // ThemeProvider now handles theme at the app level
-  
+export function Layout() {  
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />

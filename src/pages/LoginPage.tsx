@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { MessageSquare } from 'lucide-react';
-import { Notification } from '@/components/ui/notification';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { MessageSquare } from "lucide-react";
+import { Notification } from "@/components/ui/notification";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,28 +18,26 @@ export function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Simple validation for dummy login
-    if (email.includes('@') && password.length >= 4) {
-      // Success - navigate to chat page
-      navigate('/chat');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    if (email.includes("@") && password.length >= 4) {
+      navigate("/chat");
     } else {
-      // Show error for invalid input
-      setError('Invalid credentials. Use any valid email format and password (4+ chars)');
+      setError(
+        "Invalid credentials. Use any valid email format and password (4+ chars)"
+      );
     }
-    
+
     setLoading(false);
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       {error && (
-        <Notification 
-          message={error} 
-          type="error" 
+        <Notification
+          message={error}
+          type="error"
           onClose={() => setError(null)}
         />
       )}
@@ -80,12 +78,12 @@ export function LoginPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-primary hover:underline">
             Sign up
           </Link>
