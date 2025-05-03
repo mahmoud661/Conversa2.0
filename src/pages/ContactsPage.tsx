@@ -40,7 +40,7 @@ const dummyUsers: User[] = [
 ];
 
 // Dummy AI assistant data
-const dummyAIContacts = [
+const dummyAIContacts: (User & { isAI: boolean })[] = [
   {
     id: "ai-assistant",
     name: "AI Assistant",
