@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,39 +6,76 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
 import { Notification } from '@/components/ui/notification';
+import validatePassword from '@/lib/passwordvalidation';
+import { calculatePasswordStrength, getPasswordFeedback } from '@/lib/passwordStrength';
+import { PasswordInput } from '@/components/ui/password-input';
 
 export function SignupPage() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState({ strength: 0, label: '' });
+
+  // Update password strength when password changes
+  useEffect(() => {
+    if (password) {
+      const strengthResult = calculatePasswordStrength(password);
+      setPasswordStrength(strengthResult);
+      
+      // Update validation errors
+      const feedback = getPasswordFeedback(password);
+      setPasswordError(feedback);
+    } else {
+      setPasswordStrength({ strength: 0, label: '' });
+      setPasswordError(null);
+    }
+  }, [password]);
+
+  useEffect(() => {
+    if (confirmPassword && password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match');
+    } else {
+      setConfirmPasswordError(null);
+    }
+  }, [password, confirmPassword]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
-    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Simple validation for dummy signup
-    if (name.length >= 2 && email.includes('@') && password.length >= 6) {
+    const passwordValidation = validatePassword(password);
+    
+    if (name.length < 2) {
+      setError('Name must be at least 2 characters');
+    } else if (!email.includes('@')) {
+      setError('Please enter a valid email');
+    } else if (!passwordValidation.isValid) {
+      setError(passwordValidation.errors[0]);
+    } else if (password !== confirmPassword) {
+      setError('Passwords do not match');
+    } else {
       // Success - navigate to chat page
       navigate('/chat');
-    } else {
-      // Show validation errors
-      if (name.length < 2) {
-        setError('Name must be at least 2 characters');
-      } else if (!email.includes('@')) {
-        setError('Please enter a valid email');
-      } else {
-        setError('Password must be at least 6 characters');
-      }
     }
     
     setLoading(false);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
   };
 
   return (
@@ -74,6 +111,7 @@ export function SignupPage() {
               required
             />
           </div>
+          
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -85,17 +123,32 @@ export function SignupPage() {
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          
+          <PasswordInput
+            id="password"
+            label="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            placeholder="Create a password"
+            required
+            autoComplete="new-password"
+            error={passwordError}
+            showStrengthMeter={true}
+            strength={passwordStrength.strength}
+            strengthLabel={passwordStrength.label}
+          />
+          
+          <PasswordInput
+            id="confirm-password"
+            label="Confirm Password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            placeholder="Confirm your password"
+            required
+            autoComplete="new-password"
+            error={confirmPasswordError}
+          />
+          
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Creating account...' : 'Sign up'}
           </Button>
