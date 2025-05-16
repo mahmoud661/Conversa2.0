@@ -1,0 +1,1 @@
+export const backUrl = "https://api.conversa.com.br/v1";
